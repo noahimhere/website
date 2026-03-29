@@ -12,11 +12,11 @@ const smallSphereGeometry = new SphereGeometry(1, 16, 16)
 const wireSphereGeometry = new WireframeGeometry(smallSphereGeometry)
 
 const planets = [
-  { radius: 0.34, a: 15, e: 0.05, inclination: 0.1, orbitRotation: 0.2, speed: 1.4, phase: 0, color: '#7dd3fc' },
-  { radius: 0.6, a: 40, e: 0.5, inclination: 0.35, orbitRotation: 1.1, speed: 0.9, phase: 1.2, color: '#fca5a5' },
-  { radius: 0.4, a: 65.8, e: 0.1, inclination: -0.2, orbitRotation: 2.2, speed: 0.6, phase: 2.4, color: '#fde68a' },
+  { radius: 0.34, a: 5, e: 0.05, inclination: 0.1, orbitRotation: 0.2, speed: 1.4, phase: 0, color: '#7dd3fc' },
+  { radius: 0.6, a: 22, e: 0.5, inclination: 0.35, orbitRotation: 1.1, speed: 0.9, phase: 1.2, color: '#fca5a5' },
+  { radius: 0.4, a: 15.8, e: 0.1, inclination: -0.2, orbitRotation: 2.2, speed: 0.6, phase: 2.4, color: '#fde68a' },
   { radius: 0.8, a: 55.8, e: 0.1, inclination: 0.5, orbitRotation: -0.7, speed: 0.3, phase: 5.4, color: '#4ec246' },
-  { radius: 0.3, a: 75, e: 0.9, inclination: 0.1, orbitRotation: 2, speed: 0.5, phase: 0, color: '#7dd3fc' }
+  { radius: 0.3, a: 105, e: 0.9, inclination: 0.1, orbitRotation: 1, speed: 0.5, phase: 0, color: '#7dd3fc' }
 ]
 
 function WireSphere({ radius = 1, color = 'white' }) {
@@ -27,7 +27,7 @@ function WireSphere({ radius = 1, color = 'white' }) {
   )
 }
 
-function OrbitPath({ a, e, color = '#444444', segments = 128 }) { //solving orbit path
+function OrbitPath({ a, e, color = '#444444', segments = 128 }) {
   const geometry = useMemo(() => {
     const b = a * Math.sqrt(1 - e * e)
     const points = []
@@ -51,7 +51,7 @@ function OrbitPath({ a, e, color = '#444444', segments = 128 }) { //solving orbi
   )
 }
 
-function solveEccentricAnomaly(meanAnomaly, eccentricity, iterations = 5) { // super fast speed when high eccentricity low alt
+function solveEccentricAnomaly(meanAnomaly, eccentricity, iterations = 5) {
   let eccentricAnomaly = meanAnomaly
 
   for (let i = 0; i < iterations; i += 1) {
