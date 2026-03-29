@@ -23,7 +23,7 @@ const planets = [
 const CAMERA_DISTANCE_MULTIPLIER = 1 //changes distance of planet from camera
 const SUN_CAMERA_DISTANCE = 50
 const SUN_CAMERA_HEIGHT = 4
-const ORBIT_PATH_SATURATION_MULTIPLIER = 1
+const ORBIT_PATH_SATURATION_MULTIPLIER = 0.8
 
 function WireSphere({ radius = 1, color = 'white' }) {
   return (

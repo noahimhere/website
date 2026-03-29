@@ -2,7 +2,6 @@ import { createRef, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import {
   BufferGeometry,
-  Color,
   Float32BufferAttribute,
   SphereGeometry,
   WireframeGeometry,
@@ -23,7 +22,6 @@ const planets = [
 const CAMERA_DISTANCE_MULTIPLIER = 1 //changes distance of planet from camera
 const SUN_CAMERA_DISTANCE = 50
 const SUN_CAMERA_HEIGHT = 4
-const ORBIT_PATH_SATURATION_MULTIPLIER = 1
 
 function WireSphere({ radius = 1, color = 'white' }) {
   return (
@@ -31,22 +29,6 @@ function WireSphere({ radius = 1, color = 'white' }) {
       <lineBasicMaterial color={color} />
     </lineSegments>
   )
-}
-
-function getOrbitColor(color, selected) {
-  if (selected) {
-    return color
-  }
-
-  const adjustedColor = new Color(color)
-  const hsl = { h: 0, s: 0, l: 0 }
-  adjustedColor.getHSL(hsl)
-  adjustedColor.setHSL(
-    hsl.h,
-    hsl.s * ORBIT_PATH_SATURATION_MULTIPLIER,
-    Math.min(1, hsl.l + 0.05)
-  )
-  return `#${adjustedColor.getHexString()}`
 }
 
 function OrbitPath({ a, e, color, segments = 128 }) { //solving orbit path
@@ -113,7 +95,7 @@ function Planet({
   return (
     <group rotation={[0, orbitRotation, 0]}>
       <group rotation={[inclination, 0, 0]}>
-        <OrbitPath a={a} e={e} color={getOrbitColor(color, selected)} />
+        <OrbitPath a={a} e={e} color={color} />
         <group ref={ref}>
           <WireSphere radius={selected ? radius * 1.15 : radius} color={color} />
         </group>
