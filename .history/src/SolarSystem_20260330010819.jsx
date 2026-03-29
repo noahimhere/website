@@ -15,7 +15,7 @@ const wireSphereGeometry = new WireframeGeometry(smallSphereGeometry)
 const planets = [
   { radius: 0.34, a: 15, e: 0.05, inclination: 0.1, orbitRotation: 0.2, speed: 0.2, phase: 0, color: '#c2fe0b' },
   { radius: 1, a: 40, e: 0.5, inclination: 0.35, orbitRotation: 1.1, speed: 0.1, phase: 1.2, color: '#01ffff' },
-  { radius: 1.5, a: 65.8, e: 0.1, inclination: -0.2, orbitRotation: 2.2, speed: 0.07, phase: 2.4, color: '#AC35A8' },
+  { radius: 1.5, a: 65.8, e: 0.1, inclination: -0.2, orbitRotation: 2.2, speed: 0.07, phase: 2.4, color: '#ff0d1a' },
   { radius: 1.8, a: 55.8, e: 0.1, inclination: 0.5, orbitRotation: -0.7, speed: 0.02, phase: 5.4, color: '#3C4FFF' },
   { radius: 0.8, a: 60, e: 0.9, inclination: 0.1, orbitRotation: 2, speed: 0.09, phase: 0, color: '#59b41d' }
 ]
@@ -140,7 +140,7 @@ function SolarSystem() {
         fixedHeight={isSunSelected ? SUN_CAMERA_HEIGHT : undefined}
       />
       <group ref={sunRef}>
-        <WireSphere radius={selectedIndex === 0 ? 3.3 : 3} color="#FF0D1A" />
+        <WireSphere radius={selectedIndex === 0 ? 3.3 : 3} color="orange" />
       </group>
       {planets.map((planet, index) => (
         <Planet
