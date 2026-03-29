@@ -5,22 +5,24 @@ import {
   Color,
   Float32BufferAttribute,
   SphereGeometry,
+  Vector3,
   WireframeGeometry,
 } from 'three'
 import CameraController from './CameraController'
 
 const smallSphereGeometry = new SphereGeometry(1, 16, 16)
 const wireSphereGeometry = new WireframeGeometry(smallSphereGeometry)
+const SUN = { name: 'HOME', radius: 3, a: 0, e: 0, inclination: 0, color: '#FF0D1A' }
 
 const planets = [
-  { radius: 0.34, a: 15, e: 0.05, inclination: 0.1, orbitRotation: 0.2, speed: 0.2, phase: 0, color: '#c2fe0b' },
-  { radius: 1, a: 40, e: 0.5, inclination: 0.35, orbitRotation: 1.1, speed: 0.1, phase: 1.2, color: '#01ffff' },
-  { radius: 1.5, a: 65.8, e: 0.1, inclination: -0.2, orbitRotation: 2.2, speed: 0.07, phase: 2.4, color: '#AC35A8' },
-  { radius: 1.8, a: 55.8, e: 0.1, inclination: 0.5, orbitRotation: -0.7, speed: 0.02, phase: 5.4, color: '#3C4FFF' },
-  { radius: 0.8, a: 60, e: 0.9, inclination: 0.1, orbitRotation: 2, speed: 0.09, phase: 0, color: '#59b41d' }
+  { name: 'ABOUT ME', radius: 0.34, a: 15.23, e: 0.05, inclination: 0.1, orbitRotation: 0.2, speed: 0.2, phase: 0, color: '#c2fe0b' },
+  { name: 'PROJECTS', radius: 1.12, a: 40.12, e: 0.5, inclination: 0.35, orbitRotation: 1.1, speed: 0.1, phase: 1.2, color: '#01ffff' },
+  { name: 'CONTACT', radius: 1.54, a: 65.81, e: 0.7, inclination: -0.2, orbitRotation: 2.2, speed: 0.07, phase: 2.4, color: '#AC35A8' },
+  { name: 'MEDIA', radius: 1.85, a: 55.86, e: 0.1, inclination: 0.5, orbitRotation: -0.7, speed: 0.02, phase: 5.4, color: '#3C4FFF' },
+  { name: 'GITHUB', radius: 0.87, a: 60.5, e: 0.9, inclination: 0.1, orbitRotation: 2, speed: 0.09, phase: 0, color: '#59b41d' }
 ]
 
-const CAMERA_DISTANCE_MULTIPLIER = 1 //changes distance of planet from camera
+const CAMERA_DISTANCE_MULTIPLIER = 4 //changes distance of planet from camera
 const SUN_CAMERA_DISTANCE = 50
 const SUN_CAMERA_HEIGHT = 4
 const ORBIT_PATH_SATURATION_MULTIPLIER = 1
@@ -122,16 +124,37 @@ function Planet({
   )
 }
 
-function SolarSystem() {
+function SolarSystem({ onSelectionChange }) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const sunRef = useRef()
   const lastInputTimeRef = useRef(0)
   const touchStartRef = useRef({ x: 0, y: 0 })
+  const selectedPosition = useMemo(() => new Vector3(), [])
   const planetRefs = useMemo(() => planets.map(() => createRef()), [])
   const focusTargets = useMemo(() => [sunRef, ...planetRefs], [planetRefs])
   const isSunSelected = selectedIndex === 0
-  const selectedRadius = selectedIndex === 0 ? 3 : planets[selectedIndex - 1].radius
+  const selectedBody = isSunSelected ? SUN : planets[selectedIndex - 1]
+  const selectedRadius = selectedBody.radius
   const focusTargetCount = focusTargets.length
+
+  useFrame(() => {
+    const selectedTarget = focusTargets[selectedIndex]
+
+    if (!onSelectionChange || !selectedTarget?.current) {
+      return
+    }
+
+    selectedTarget.current.getWorldPosition(selectedPosition)
+    onSelectionChange({
+      ...selectedBody,
+      index: selectedIndex,
+      position: {
+        x: selectedPosition.x,
+        y: selectedPosition.y,
+        z: selectedPosition.z,
+      },
+    })
+  })
 
   function selectPrevious() {
     setSelectedIndex((current) => (current - 1 + focusTargetCount) % focusTargetCount)
@@ -238,7 +261,7 @@ function SolarSystem() {
         fixedHeight={isSunSelected ? SUN_CAMERA_HEIGHT : undefined}
       />
       <group ref={sunRef}>
-        <WireSphere radius={selectedIndex === 0 ? 3.3 : 3} color="#FF0D1A" />
+        <WireSphere radius={selectedIndex === 0 ? 3.3 : SUN.radius} color={SUN.color} />
       </group>
       {planets.map((planet, index) => (
         <Planet
