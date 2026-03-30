@@ -87,6 +87,7 @@ h1{
   pointer-events: none;
   text-align: center;
   background-color: transparent;
+  transition: 500ms ease;
 }
 
 .middletitle h1 {
