@@ -15,7 +15,7 @@ const smallSphereGeometry = new SphereGeometry(1, 16, 16)
 const smallCubeGeometry = new BoxGeometry(0.5, 0.5, 0.5)
 const wireSphereGeometry = new WireframeGeometry(smallSphereGeometry)
 const wireCubeGeometry = new WireframeGeometry(smallCubeGeometry)
-const DYSON_SWARM_COUNT = 140
+const DYSON_SWARM_COUNT = 500
 const DYSON_SWARM_ORBIT_DISTANCE = 4.9
 const DYSON_SWARM_CUBE_SIZE = 0.1
 const DYSON_SWARM_COLOR = '#999999'
@@ -33,10 +33,22 @@ const SUN = {
 
 // Add a `satellites` array to any body to attach orbiting objects with custom models.
 const planets = [
-  { name: 'BUYAN', page: "aboutme", radius: 0.34, a: 15.23, e: 0.05, inclination: 0.1, orbitRotation: 0.2, speed: 0.2, phase: 0, color: '#c2fe0b', ring: false},
+  {
+    name: 'BUYAN',
+    page: 'aboutme',
+    radius: 0.34,
+    a: 15.23,
+    e: 0.05,
+    inclination: 0.1,
+    orbitRotation: 0.2,
+    speed: 0.2,
+    phase: 0,
+    color: '#c2fe0b',
+    ring: false,
+  },
   {
     name: 'VINETA',
-    page: "projects",
+    page: 'projects',
     radius: 1.12,
     a: 40.12,
     e: 0.5,
@@ -59,14 +71,67 @@ const planets = [
         inclination: 0.1,
         orbitRotation: 0.3,
         size: 0.2,
-        color: '#fff1a8',
+        color: '#ffffff',
         model: SatelliteWireCubeModel,
       },
     ],
   },
-  { name: 'KITEZH', page:"media", radius: 1.54, a: 65.81, e: 0.7, inclination: -0.2, orbitRotation: 2.2, speed: 0.12, phase: 2.4, color: '#AC35A8', ring: false },
-  { name: 'ROTFRONT', page: "contact", radius: 1.85, a: 55.86, e: 0.1, inclination: 0.5, orbitRotation: -0.7, speed: 0.05, phase: 5.4, color: '#3C4FFF', ring: true, ringWidth: 2.5, ringColor: '#3C4FFF', innerRing: 0.5, ringRotation: [Math.PI / 1.7, 0, 0] },
-  { name: 'LENG', page: "github", radius: 0.87, a: 60.5, e: 0.9, inclination: 0.1, orbitRotation: 2, speed: 0.12, phase: 0, color: '#59b41d', ring: false }
+  {
+    name: 'KITEZH',
+    page: 'media',
+    radius: 1.54,
+    a: 65.81,
+    e: 0.7,
+    inclination: -0.2,
+    orbitRotation: 2.2,
+    speed: 0.12,
+    phase: 2.4,
+    color: '#AC35A8',
+    ring: false,
+    satellites: [
+      {
+        name: 'KITEZH RELAY',
+        distance: 3.5,
+        speed: 0.7,
+        phase: 0.2,
+        inclination: 1.57708 / 2,
+        orbitRotation: 0.3,
+        size: 0.2,
+        color: '#ffffff',
+        model: SatelliteWireCubeModel,
+      }
+    ]
+  },
+  {
+    name: 'ROTFRONT',
+    page: 'contact',
+    radius: 1.85,
+    a: 55.86,
+    e: 0.1,
+    inclination: 0.5,
+    orbitRotation: -0.7,
+    speed: 0.05,
+    phase: 5.4,
+    color: '#3C4FFF',
+    ring: true,
+    ringWidth: 2.5,
+    ringColor: '#3C4FFF',
+    innerRing: 0.5,
+    ringRotation: [Math.PI / 1.7, 0, 0],
+  },
+  {
+    name: 'LENG',
+    page: 'github',
+    radius: 0.87,
+    a: 60.5,
+    e: 0.9,
+    inclination: 0.1,
+    orbitRotation: 2,
+    speed: 0.12,
+    phase: 0,
+    color: '#59b41d',
+    ring: false,
+  },
 ]
 
 const CAMERA_DISTANCE_MULTIPLIER = 4 //changes distance of planet from camera
@@ -79,6 +144,36 @@ function WireSphere({ radius = 1, color = 'white' }) {
     <lineSegments geometry={wireSphereGeometry} scale={radius}>
       <lineBasicMaterial color={color} />
     </lineSegments>
+  )
+}
+
+function HoverTarget({ radius, onHoverChange, body, disabled = false }) {
+  if (!onHoverChange || disabled) {
+    return null
+  }
+
+  function updateHover(event) {
+    event.stopPropagation()
+    onHoverChange({
+      name: body.name,
+      color: body.color,
+      pointer: {
+        x: event.nativeEvent.clientX + 12,
+        y: event.nativeEvent.clientY + 12,
+      },
+    })
+  }
+
+  function clearHover(event) {
+    event.stopPropagation()
+    onHoverChange(null)
+  }
+
+  return (
+    <mesh onPointerOver={updateHover} onPointerMove={updateHover} onPointerOut={clearHover}>
+      <sphereGeometry args={[Math.max(radius * 1.6, 1.1), 16, 16]} />
+      <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+    </mesh>
   )
 }
 
@@ -339,6 +434,7 @@ function solveEccentricAnomaly(meanAnomaly, eccentricity, iterations = 5) { // s
 }
 
 function Planet({
+  name,
   radius,
   a,
   e,
@@ -355,6 +451,7 @@ function Planet({
   innerRing = 0.15,
   ringRotation = [0, 0, 0],
   satellites = [],
+  onHoverChange,
 }) {
   const ref = planetRef
 
@@ -375,6 +472,12 @@ function Planet({
         <OrbitPath a={a} e={e} color={getOrbitColor(color, selected)} />
         <group ref={ref}>
           <WireSphere radius={radius} color={color} />
+          <HoverTarget
+            radius={radius}
+            onHoverChange={onHoverChange}
+            body={{ name, color }}
+            disabled={selected}
+          />
           {ring && (
             <Ring
               innerRadius={radius + innerRing}
@@ -390,7 +493,7 @@ function Planet({
   )
 }
 
-function SolarSystem({ onSelectionChange }) {
+function SolarSystem({ onSelectionChange, onHoverChange }) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const sunRef = useRef()
   const lastInputTimeRef = useRef(0)
@@ -436,6 +539,10 @@ function SolarSystem({ onSelectionChange }) {
   function selectNext() {
     setSelectedIndex((current) => (current + 1) % focusTargetCount)
   }
+
+  useEffect(() => {
+    onHoverChange?.(null)
+  }, [selectedIndex, onHoverChange])
 
   useEffect(() => {
     const inputCooldownMs = 300
@@ -536,6 +643,7 @@ function SolarSystem({ onSelectionChange }) {
           {...planet}
           selected={index + 1 === selectedIndex}
           planetRef={planetRefs[index]}
+          onHoverChange={onHoverChange}
         />
       ))}
       <CameraController

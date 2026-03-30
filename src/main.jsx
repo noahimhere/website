@@ -8,6 +8,7 @@ const SUN_RADIUS = 3
 
 function App() {
   const [selectedBody, setSelectedBody] = useState(null)
+  const [hoveredBody, setHoveredBody] = useState(null)
   const showTitle = !selectedBody || selectedBody.page === 'home'
   const distanceFromSunCenter = selectedBody
     ? Math.hypot(
@@ -28,10 +29,23 @@ function App() {
         camera={{ position: [0, 6, 14], fov: 50 }}
         gl={{ alpha: true }}
         style={{ background: 'transparent' }}
+        onPointerLeave={() => setHoveredBody(null)}
       >
         {/* <color attach="background" args={['#010101']} /> */}
-        <SolarSystem onSelectionChange={setSelectedBody} />
+        <SolarSystem onSelectionChange={setSelectedBody} onHoverChange={setHoveredBody} />
       </Canvas>
+      {hoveredBody && (
+        <div
+          className="hoverLabel"
+          style={{
+            left: hoveredBody.pointer.x,
+            top: hoveredBody.pointer.y,
+            color: hoveredBody.color,
+          }}
+        >
+          {hoveredBody.name}
+        </div>
+      )}
       {selectedBody && (
         <div className="infoContainer" style={{ '--selected-color': selectedBody.color }}>
           <div>{selectedBody.name}</div>

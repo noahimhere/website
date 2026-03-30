@@ -34,7 +34,7 @@ html, body, #root {
   position: fixed !important;
   inset: 0;
   z-index: 2;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 canvas{
@@ -56,6 +56,19 @@ canvas{
   font-size: 14px;
   line-height: 1.5;
   border: 1px solid var(--selected-color);
+}
+
+.hoverLabel {
+  position: fixed;
+  z-index: 3;
+  pointer-events: none;
+  font-family: 'dinmittel';
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.85);
 }
 
 h1{
