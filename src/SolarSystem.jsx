@@ -2,6 +2,7 @@ import { createRef, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import {
   BufferGeometry,
+  BoxGeometry,
   Color,
   Float32BufferAttribute,
   SphereGeometry,
@@ -11,12 +12,58 @@ import {
 import CameraController from './CameraController'
 
 const smallSphereGeometry = new SphereGeometry(1, 16, 16)
+const smallCubeGeometry = new BoxGeometry(0.5, 0.5, 0.5)
 const wireSphereGeometry = new WireframeGeometry(smallSphereGeometry)
-const SUN = { name: 'SUN', page:"home", radius: 3, a: 0, e: 0, inclination: 0, color: '#FF0D1A' }
+const wireCubeGeometry = new WireframeGeometry(smallCubeGeometry)
+const DYSON_SWARM_COUNT = 140
+const DYSON_SWARM_ORBIT_DISTANCE = 4.9
+const DYSON_SWARM_CUBE_SIZE = 0.1
+const DYSON_SWARM_COLOR = '#999999'
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
+const SUN = {
+  name: 'SUN',
+  page:"home",
+  radius: 3,
+  a: 0,
+  e: 0,
+  inclination: 0,
+  color: '#FF0D1A',
+  satellites: createDysonSwarmSatellites(),
+}
 
+// Add a `satellites` array to any body to attach orbiting objects with custom models.
 const planets = [
   { name: 'BUYAN', page: "aboutme", radius: 0.34, a: 15.23, e: 0.05, inclination: 0.1, orbitRotation: 0.2, speed: 0.2, phase: 0, color: '#c2fe0b', ring: false},
-  { name: 'VINETA', page: "projects", radius: 1.12, a: 40.12, e: 0.5, inclination: 0.35, orbitRotation: 1.1, speed: 0.17, phase: 1.2, color: '#01ffff', ring: true, ringWidth: 0.01, ringColor: '#7ffcff', innerRing: 1, ringRotation: [Math.PI / 2.5, 1.3245, 0] },
+  {
+    name: 'VINETA',
+    page: "projects",
+    radius: 1.12,
+    a: 40.12,
+    e: 0.5,
+    inclination: 0.35,
+    orbitRotation: 1.1,
+    speed: 0.17,
+    phase: 1.2,
+    color: '#01ffff',
+    ring: true,
+    ringWidth: 0.01,
+    ringColor: '#7ffcff',
+    innerRing: 1,
+    ringRotation: [Math.PI / 2.5, 1.3245, 0],
+    satellites: [
+      {
+        name: 'VINETA RELAY',
+        distance: 1.5,
+        speed: 1.5,
+        phase: 0.2,
+        inclination: 0.1,
+        orbitRotation: 0.3,
+        size: 0.2,
+        color: '#fff1a8',
+        model: SatelliteWireCubeModel,
+      },
+    ],
+  },
   { name: 'KITEZH', page:"media", radius: 1.54, a: 65.81, e: 0.7, inclination: -0.2, orbitRotation: 2.2, speed: 0.12, phase: 2.4, color: '#AC35A8', ring: false },
   { name: 'ROTFRONT', page: "contact", radius: 1.85, a: 55.86, e: 0.1, inclination: 0.5, orbitRotation: -0.7, speed: 0.05, phase: 5.4, color: '#3C4FFF', ring: true, ringWidth: 2.5, ringColor: '#3C4FFF', innerRing: 0.5, ringRotation: [Math.PI / 1.7, 0, 0] },
   { name: 'LENG', page: "github", radius: 0.87, a: 60.5, e: 0.9, inclination: 0.1, orbitRotation: 2, speed: 0.12, phase: 0, color: '#59b41d', ring: false }
@@ -33,6 +80,65 @@ function WireSphere({ radius = 1, color = 'white' }) {
       <lineBasicMaterial color={color} />
     </lineSegments>
   )
+}
+
+function getScaleVector(scale = 1) {
+  return Array.isArray(scale) ? scale : [scale, scale, scale]
+}
+
+function SatelliteWireCubeModel({ color = 'white', scale = 0.2 }) {
+  return (
+    <lineSegments geometry={wireCubeGeometry} scale={getScaleVector(scale)}>
+      <lineBasicMaterial color={color} />
+    </lineSegments>
+  )
+}
+
+function SatelliteSolidCubeModel({ color = 'white', scale = 0.2 }) {
+  return (
+    <mesh geometry={smallCubeGeometry} scale={getScaleVector(scale)}>
+      <meshBasicMaterial color={color} />
+    </mesh>
+  )
+}
+
+function SatelliteWireSphereModel({ color = 'white', scale = 0.2 }) {
+  return (
+    <lineSegments geometry={wireSphereGeometry} scale={getScaleVector(scale)}>
+      <lineBasicMaterial color={color} />
+    </lineSegments>
+  )
+}
+
+export const satelliteModels = {
+  wireCube: SatelliteWireCubeModel,
+  solidCube: SatelliteSolidCubeModel,
+  wireSphere: SatelliteWireSphereModel,
+}
+
+function createDysonSwarmSatellites(count = DYSON_SWARM_COUNT) {
+  return Array.from({ length: count }, (_, index) => {
+    const spinDirection = index % 2 === 0 ? 1 : -1
+
+    return {
+      name: `SWARM ${index + 1}`,
+      a: DYSON_SWARM_ORBIT_DISTANCE,
+      e: 0,
+      inclination: Math.asin(-1 + (2 * (index + 0.5)) / count),
+      orbitRotation: index * GOLDEN_ANGLE,
+      speed: 0.45,
+      phase: index * GOLDEN_ANGLE * 1.7,
+      size: DYSON_SWARM_CUBE_SIZE,
+      color: DYSON_SWARM_COLOR,
+      model: SatelliteWireCubeModel,
+      showOrbit: false,
+      spin: [
+        0.85 * spinDirection,
+        1.1 * -spinDirection,
+        0.55 * spinDirection,
+      ],
+    }
+  })
 }
 
 function Ring({ innerRadius = 1, outerRadius = 1.1, color = 'white', rotation = [0, 0, 0] }) {
@@ -134,6 +240,92 @@ function OrbitPath({ a, e, color, segments = 128 }) { //solving orbit path
   )
 }
 
+function OrbitingSatellites({ satellites = [] }) {
+  if (!satellites.length) {
+    return null
+  }
+
+  const satelliteRefs = useRef([])
+  const normalizedSatellites = useMemo(
+    () =>
+      satellites.map((satellite) => {
+        const semiMajorAxis = satellite.a ?? satellite.distance ?? 2
+        const orbitEccentricity = satellite.e ?? satellite.eccentricity ?? 0
+
+        return {
+          ...satellite,
+          a: semiMajorAxis,
+          e: orbitEccentricity,
+          inclination: satellite.inclination ?? 0,
+          orbitRotation: satellite.orbitRotation ?? 0,
+          speed: satellite.speed ?? 1,
+          phase: satellite.phase ?? 0,
+          color: satellite.color ?? 'white',
+          size: satellite.size ?? 0.2,
+          model: satellite.model ?? SatelliteWireCubeModel,
+          showOrbit: satellite.showOrbit ?? false,
+          orbitColor: satellite.orbitColor ?? satellite.color ?? 'white',
+          orbitSegments: satellite.orbitSegments ?? 64,
+          spin: satellite.spin ?? [0, 0, 0],
+        }
+      }),
+    [satellites]
+  )
+
+  useFrame(({ clock }) => {
+    const elapsedTime = clock.getElapsedTime()
+
+    for (let index = 0; index < normalizedSatellites.length; index += 1) {
+      const satellite = normalizedSatellites[index]
+      const ref = satelliteRefs.current[index]
+
+      if (!ref) {
+        continue
+      }
+
+      const meanAnomaly = elapsedTime * satellite.speed + satellite.phase
+      const eccentricAnomaly = solveEccentricAnomaly(meanAnomaly, satellite.e)
+      const semiMinorAxis = satellite.a * Math.sqrt(1 - satellite.e * satellite.e)
+
+      ref.position.x = satellite.a * (Math.cos(eccentricAnomaly) - satellite.e)
+      ref.position.z = semiMinorAxis * Math.sin(eccentricAnomaly)
+      ref.rotation.x = elapsedTime * satellite.spin[0]
+      ref.rotation.y = elapsedTime * satellite.spin[1]
+      ref.rotation.z = elapsedTime * satellite.spin[2]
+    }
+  })
+
+  return (
+    <>
+      {normalizedSatellites.map((satellite, index) => {
+        const Model = satellite.model
+
+        return (
+          <group key={satellite.name ?? index} rotation={[0, satellite.orbitRotation, 0]}>
+            <group rotation={[satellite.inclination, 0, 0]}>
+              {satellite.showOrbit && (
+                <OrbitPath
+                  a={satellite.a}
+                  e={satellite.e}
+                  color={satellite.orbitColor}
+                  segments={satellite.orbitSegments}
+                />
+              )}
+              <group
+                ref={(node) => {
+                  satelliteRefs.current[index] = node
+                }}
+              >
+                <Model color={satellite.color} scale={satellite.size} satellite={satellite} />
+              </group>
+            </group>
+          </group>
+        )
+      })}
+    </>
+  )
+}
+
 function solveEccentricAnomaly(meanAnomaly, eccentricity, iterations = 5) { // super fast speed when high eccentricity low alt
   let eccentricAnomaly = meanAnomaly
 
@@ -162,6 +354,7 @@ function Planet({
   ringWidth = 0.2,
   innerRing = 0.15,
   ringRotation = [0, 0, 0],
+  satellites = [],
 }) {
   const ref = planetRef
 
@@ -190,6 +383,7 @@ function Planet({
               rotation={ringRotation}
             />
           )}
+          <OrbitingSatellites satellites={satellites} />
         </group>
       </group>
     </group>
@@ -334,6 +528,7 @@ function SolarSystem({ onSelectionChange }) {
     <>
       <group ref={sunRef}>
         <WireSphere radius={selectedIndex === 0 ? 3.3 : SUN.radius} color={SUN.color} />
+        <OrbitingSatellites satellites={SUN.satellites} />
       </group>
       {planets.map((planet, index) => (
         <Planet

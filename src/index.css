@@ -13,7 +13,7 @@
 }
 
 body{
-  background-color: black;
+  background-color: #120707;
 }
 *{
   margin: 0;
@@ -75,7 +75,7 @@ h1{
   font-size: 25px;
   font-family: 'Playfair Display';
   font-size: 10vw;
-  color: white;
+  color: #EEEECC;
   background-color: transparent;
   transition: opacity 1000ms ease, visibility 1000ms ease;
 }
