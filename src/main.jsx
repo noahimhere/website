@@ -22,21 +22,36 @@ function App() {
 
   return (
     <>
-      <h1 className={`middletitle ${currentBody === 'home' ? 'is-visible' : 'is-hidden'}`} style={{color: '#EEEECC'}}>
-        <span className="stretch">NLINSEOK.COM</span>
-      </h1>
-      <h1 className={`middletitle ${currentBody === 'aboutme' ? 'is-visible' : 'is-hidden'}`} style={{color: '#c2fe0b'}}>
-        <span className="stretch">BUYAN</span>
-      </h1>
-      <h1 className={`middletitle ${currentBody === 'projects' ? 'is-visible' : 'is-hidden'}`} style={{color: '#3C4FFF'}}>
-        <span className="stretch">VINETA</span>
-      </h1>
-      <h1 className={`middletitle ${currentBody === 'github' ? 'is-visible' : 'is-hidden'}`} style={{color: '#AC35A8'}}>
-        <span className="stretch">KITEZH</span>
-      </h1>
-      <h1 className={`middletitle ${currentBody === 'contact' ? 'is-visible' : 'is-hidden'}`} style={{color: '#EEEECC'}}>
-        <span className="stretch">ROTFRONT</span>
-      </h1>
+      <div className={`middletitle ${currentBody === 'home' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#EEEECC' }}>
+        <h1>
+          <span className="stretch">NLINSEOK.COM</span>
+        </h1>
+      </div>
+      <div className={`middletitle ${currentBody === 'aboutme' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#c2fe0b' }}>
+        <h1>
+          <span className="stretch">BUYAN</span>
+        </h1>
+      </div>
+      <div className={`middletitle ${currentBody === 'projects' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#3C4FFF' }}>
+        <h1>
+          <span className="stretch">VINETA</span>
+        </h1>
+      </div>
+      <div className={`middletitle ${currentBody === 'media' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#AC35A8' }}>
+        <h1>
+          <span className="stretch">KITEZH</span>
+        </h1>
+      </div>
+      <div className={`middletitle ${currentBody === 'github' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#59b41d' }}>
+        <h1>
+          <span className="stretch">LENG</span>
+        </h1>
+      </div>
+      <div className={`middletitle ${currentBody === 'contact' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#3C4FFF' }}>
+        <h1>
+          <span className="stretch">ROTFRONT</span>
+        </h1>
+      </div>
       <Canvas
         className="sceneCanvas"
         camera={{ position: [0, 6, 14], fov: 50 }}

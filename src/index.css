@@ -79,17 +79,20 @@ h1{
 .middletitle{
   display: flex;
   position: absolute;
+  inset: 0;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 2;
   pointer-events: none;
-  height: 100dvh;
-  width: 100dvw;
-  font-size: 25px;
-  font-family: 'Playfair Display';
-  font-size: 10vw;
   background-color: transparent;
   transition: opacity 500ms ease, visibility 1000ms ease;
+}
+
+.middletitle h1 {
+  color: inherit;
+  font-size: 10vw;
+  font-family: 'Playfair Display';
 }
 
 .middletitle.is-visible {
