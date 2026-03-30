@@ -9,7 +9,8 @@ const SUN_RADIUS = 3
 function App() {
   const [selectedBody, setSelectedBody] = useState(null)
   const [hoveredBody, setHoveredBody] = useState(null)
-  const showTitle = !selectedBody || selectedBody.page === 'home'
+  const currentBody = !selectedBody || selectedBody.page
+
   const distanceFromSunCenter = selectedBody
     ? Math.hypot(
         selectedBody.position.x,
@@ -21,8 +22,20 @@ function App() {
 
   return (
     <>
-      <h1 className={`middletitle ${showTitle ? 'is-visible' : 'is-hidden'}`}>
+      <h1 className={`middletitle ${currentBody === 'home' ? 'is-visible' : 'is-hidden'}`} style={{color: '#EEEECC'}}>
         <span className="stretch">NLINSEOK.COM</span>
+      </h1>
+      <h1 className={`middletitle ${currentBody === 'aboutme' ? 'is-visible' : 'is-hidden'}`} style={{color: '#c2fe0b'}}>
+        <span className="stretch">BUYAN</span>
+      </h1>
+      <h1 className={`middletitle ${currentBody === 'projects' ? 'is-visible' : 'is-hidden'}`} style={{color: '#3C4FFF'}}>
+        <span className="stretch">VINETA</span>
+      </h1>
+      <h1 className={`middletitle ${currentBody === 'github' ? 'is-visible' : 'is-hidden'}`} style={{color: '#AC35A8'}}>
+        <span className="stretch">KITEZH</span>
+      </h1>
+      <h1 className={`middletitle ${currentBody === 'contact' ? 'is-visible' : 'is-hidden'}`} style={{color: '#EEEECC'}}>
+        <span className="stretch">ROTFRONT</span>
       </h1>
       <Canvas
         className="sceneCanvas"

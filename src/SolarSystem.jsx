@@ -11,7 +11,7 @@ import {
 } from 'three'
 import CameraController from './CameraController'
 
-const smallSphereGeometry = new SphereGeometry(1, 16, 16)
+const smallSphereGeometry = new SphereGeometry(1, 16, 8)
 const smallCubeGeometry = new BoxGeometry(0.5, 0.5, 0.5)
 const wireSphereGeometry = new WireframeGeometry(smallSphereGeometry)
 const wireCubeGeometry = new WireframeGeometry(smallCubeGeometry)
@@ -99,7 +99,19 @@ const planets = [
         size: 0.2,
         color: '#ffffff',
         model: SatelliteWireCubeModel,
-      }
+      },
+      {
+        name: 'KITEZH RELAY 2',
+        distance: 2,
+        speed: 1,
+        phase: 0.2,
+        inclination: 1.57708,
+        orbitRotation: 0.3,
+        size: 0.2,
+        color: '#ffffff',
+        model: SatelliteWireCubeModel,
+      },
+
     ]
   },
   {
