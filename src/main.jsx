@@ -32,7 +32,7 @@ function App() {
           <span className="stretch">BUYAN</span>
         </h1>
       </div>
-      <div className={`middletitle ${currentBody === 'projects' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#3C4FFF' }}>
+      <div className={`middletitle ${currentBody === 'projects' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#01ffff' }}>
         <h1>
           <span className="stretch">VINETA</span>
         </h1>
