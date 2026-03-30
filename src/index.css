@@ -85,24 +85,14 @@ h1{
   align-items: center;
   z-index: 2;
   pointer-events: none;
+  text-align: center;
   background-color: transparent;
-  transition: opacity 500ms ease, visibility 1000ms ease;
 }
 
 .middletitle h1 {
   color: inherit;
   font-size: 10vw;
   font-family: 'Playfair Display';
-}
-
-.middletitle.is-visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.middletitle.is-hidden {
-  opacity: 0;
-  visibility: hidden;
 }
 
 span.stretch{

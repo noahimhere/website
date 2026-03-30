@@ -1,15 +1,28 @@
 import { createRoot } from 'react-dom/client'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './index.css'
 import { Canvas } from '@react-three/fiber'
 import SolarSystem from './SolarSystem'
 
 const SUN_RADIUS = 3
+const TITLE_TYPING_DELAY_MS = 70
+const TITLE_BACKSPACE_DELAY_MS = 45
+const BODY_TITLES = {
+  home: { text: 'NLINSEOK.COM', color: '#EEEECC' },
+  aboutme: { text: 'BUYAN', color: '#c2fe0b' },
+  projects: { text: 'VINETA', color: '#01ffff' },
+  media: { text: 'KITEZH', color: '#AC35A8' },
+  github: { text: 'LENG', color: '#59b41d' },
+  contact: { text: 'ROTFRONT', color: '#3C4FFF' },
+}
 
 function App() {
   const [selectedBody, setSelectedBody] = useState(null)
   const [hoveredBody, setHoveredBody] = useState(null)
   const currentBody = !selectedBody || selectedBody.page
+  const [typedTitle, setTypedTitle] = useState(BODY_TITLES.home.text)
+  const displayedTitleRef = useRef(BODY_TITLES.home.text)
+  const activeTitle = BODY_TITLES[currentBody] ?? BODY_TITLES.home
 
   const distanceFromSunCenter = selectedBody
     ? Math.hypot(
@@ -20,36 +33,57 @@ function App() {
     : 0
   const altitudeFromSun = Math.max(0, distanceFromSunCenter - SUN_RADIUS)
 
+  useEffect(() => {
+    const nextTitle = activeTitle.text
+    let timeoutId
+
+    function updateDisplayedTitle(value) {
+      displayedTitleRef.current = value
+      setTypedTitle(value)
+    }
+
+    function typeForward(currentText) {
+      if (currentText === nextTitle) {
+        return
+      }
+
+      timeoutId = window.setTimeout(() => {
+        const nextLength = currentText.length + 1
+        const updatedText = nextTitle.slice(0, nextLength)
+        updateDisplayedTitle(updatedText)
+        typeForward(updatedText)
+      }, TITLE_TYPING_DELAY_MS)
+    }
+
+    function backspace(currentText) {
+      if (!currentText.length) {
+        typeForward('')
+        return
+      }
+
+      timeoutId = window.setTimeout(() => {
+        const updatedText = currentText.slice(0, -1)
+        updateDisplayedTitle(updatedText)
+        backspace(updatedText)
+      }, TITLE_BACKSPACE_DELAY_MS)
+    }
+
+    if (displayedTitleRef.current === nextTitle) {
+      return undefined
+    }
+
+    backspace(displayedTitleRef.current)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [activeTitle])
+
   return (
     <>
-      <div className={`middletitle ${currentBody === 'home' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#EEEECC' }}>
+      <div className="middletitle" style={{ color: activeTitle.color }}>
         <h1>
-          <span className="stretch">NLINSEOK.COM</span>
-        </h1>
-      </div>
-      <div className={`middletitle ${currentBody === 'aboutme' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#c2fe0b' }}>
-        <h1>
-          <span className="stretch">BUYAN</span>
-        </h1>
-      </div>
-      <div className={`middletitle ${currentBody === 'projects' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#01ffff' }}>
-        <h1>
-          <span className="stretch">VINETA</span>
-        </h1>
-      </div>
-      <div className={`middletitle ${currentBody === 'media' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#AC35A8' }}>
-        <h1>
-          <span className="stretch">KITEZH</span>
-        </h1>
-      </div>
-      <div className={`middletitle ${currentBody === 'github' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#59b41d' }}>
-        <h1>
-          <span className="stretch">LENG</span>
-        </h1>
-      </div>
-      <div className={`middletitle ${currentBody === 'contact' ? 'is-visible' : 'is-hidden'}`} style={{ color: '#3C4FFF' }}>
-        <h1>
-          <span className="stretch">ROTFRONT</span>
+          <span className="stretch">{typedTitle}</span>
         </h1>
       </div>
       <Canvas
