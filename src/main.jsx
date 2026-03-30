@@ -8,6 +8,7 @@ const SUN_RADIUS = 3
 
 function App() {
   const [selectedBody, setSelectedBody] = useState(null)
+  const showTitle = !selectedBody || selectedBody.page === 'home'
   const distanceFromSunCenter = selectedBody
     ? Math.hypot(
         selectedBody.position.x,
@@ -19,13 +20,22 @@ function App() {
 
   return (
     <>
-      <Canvas camera={{ position: [0, 6, 14], fov: 50 }}>
-        <color attach="background" args={['#010101']} />
+      <h1 className={`middletitle ${showTitle ? 'is-visible' : 'is-hidden'}`}>
+        <span className="stretch">NLINSEOK.COM</span>
+      </h1>
+      <Canvas
+        className="sceneCanvas"
+        camera={{ position: [0, 6, 14], fov: 50 }}
+        gl={{ alpha: true }}
+        style={{ background: 'transparent' }}
+      >
+        {/* <color attach="background" args={['#010101']} /> */}
         <SolarSystem onSelectionChange={setSelectedBody} />
       </Canvas>
       {selectedBody && (
         <div className="infoContainer" style={{ '--selected-color': selectedBody.color }}>
           <div>{selectedBody.name}</div>
+          <div>page: {selectedBody.page}</div>
           <div>radius: {selectedBody.radius}</div>
           <div>semi-major axis: {selectedBody.a}</div>
           <div>eccentricity: {selectedBody.e}</div>
