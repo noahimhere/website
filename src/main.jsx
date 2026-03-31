@@ -8,12 +8,12 @@ const SUN_RADIUS = 3
 const TITLE_TYPING_DELAY_MS = 70
 const TITLE_BACKSPACE_DELAY_MS = 45
 const BODY_TITLES = {
-  home: { text: 'NLINSEOK.COM', color: '#EEEECC' },
-  aboutme: { text: 'BUYAN', color: '#c2fe0b' },
-  projects: { text: 'VINETA', color: '#01ffff' },
-  media: { text: 'KITEZH', color: '#AC35A8' },
-  github: { text: 'LENG', color: '#59b41d' },
-  contact: { text: 'ROTFRONT', color: '#3C4FFF' },
+  home: { text: 'NLINSEOK.COM', subtext:"Home", color: '#EEEECC' },
+  aboutme: { text: 'BUYAN', subtext: "About Me", color: '#c2fe0b' },
+  projects: { text: 'VINETA', subtext: "Projects", color: '#01ffff' },
+  media: { text: 'KITEZH', subtext: "Media", color: '#AC35A8' },
+  github: { text: 'LENG', subtext: "GitHub", color: '#59b41d' },
+  contact: { text: 'ROTFRONT', subtext: "Contact", color: '#3C4FFF' },
 }
 
 function App() {
@@ -85,6 +85,7 @@ function App() {
         <h1>
           <span className="stretch">{typedTitle}</span>
         </h1>
+        <h2>{activeTitle.subtext}</h2>
       </div>
       <Canvas
         className="sceneCanvas"

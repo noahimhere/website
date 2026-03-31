@@ -88,6 +88,7 @@ h1{
   text-align: center;
   background-color: transparent;
   transition: 500ms ease;
+  font-family: 'Playfair Display';
 }
 
 .middletitle h1 {
@@ -104,4 +105,12 @@ span.stretch{
     -o-transform:scale(0.7,1); /* Opera */
     transform:scale(0.7,1); /* W3C */
 
+}
+
+
+.middletitle h2 {
+  color: inherit;
+  position: relative;
+  top: 0.1vh;
+  font-size: 2vh;
 }
